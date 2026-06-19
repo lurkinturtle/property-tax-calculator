@@ -3,4 +3,4 @@ WORKDIR /app
 RUN pip install streamlit
 COPY taxcalc_v2_app.py /app/taxcalc_v2_app.py
 EXPOSE 8501
-CMD ["streamlit", "run", "taxcalc_v2_app.pyy", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "taxcalc_v2_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
