@@ -1,5 +1,7 @@
 import streamlit as st
 
+# Version 3: editing user input to grab all inputs for the output
+
 # Configure page style to look like a modern mobile/desktop app
 st.set_page_config(page_title="Bell County Tax Calculator", page_icon="🏠", layout="centered")
 
@@ -35,12 +37,11 @@ def update_from_slider():
     st.session_state.price = st.session_state.slider_price
 
 def update_from_input():
-    # Keep typed input within the logical boundaries of the slider
+    # Keep typed input within logical boundaries
     clamped_val = min(max(st.session_state.input_price, 150000), 750000)
     st.session_state.price = clamped_val
 
-# 3. Render the widgets side-by-side or stacked
-# We pull the shared data from st.session_state.price
+# 3. Render the widgets (They read from and write to the same state)
 home_price_input = st.number_input(
     "Type Exact Property Price ($)",
     min_value=150000,
@@ -62,18 +63,11 @@ home_price_slider = st.slider(
     on_change=update_from_slider
 )
 
-# 4. Use the consolidated state value for all tax math below
+# 4. CRITICAL: This variable feeds the rest of your math layers below
 home_price = st.session_state.price
 
-# Hyper-precise slider down to $100 increments
-home_price = st.slider(
-    "Property Purchase Price ($)", 
-    min_value=150000, 
-    max_value=750000, 
-    value=300000, 
-    step=100,
-    format="$%d"
-)
+# --- LOCATION SELECTORS ---
+# (Make sure the rest of your code uses 'home_price' for all calculations)
 
 # Side-by-side dropdown selectors
 col1, col2 = st.columns(2)
