@@ -28,42 +28,45 @@ isd_rates = {
 # --- USER INPUTS ---
 st.subheader("Calculator Inputs")
 
-# 1. Initialize session state if it doesn't exist yet
+# 1. Initialize our master data pool if the app is loading for the first time
 if "price" not in st.session_state:
     st.session_state.price = 300000
 
-# 2. Define callback functions to sync the widgets
+# 2. Callbacks: What happens when a user touches a specific widget
 def update_from_slider():
+    # Write the slider's temporary state into our master pool
     st.session_state.price = st.session_state.slider_price
 
 def update_from_input():
-    # Keep typed input within logical boundaries
+    # Read the typed number, clamp it safely, and write it to our master pool
     clamped_val = min(max(st.session_state.input_price, 150000), 750000)
     st.session_state.price = clamped_val
 
-# 3. Render the widgets (They read from and write to the same state)
-home_price_input = st.number_input(
+
+# 3. The Text Box 
+st.number_input(
     "Type Exact Property Price ($)",
     min_value=150000,
     max_value=750000,
-    value=st.session_state.price,
+    value=st.session_state.price,     # <-- CRITICAL: Must read from the master pool
     step=100,
-    key="input_price",
-    on_change=update_from_input
+    key="input_price",                # <-- CRITICAL: Temporary box memory
+    on_change=update_from_input       # <-- CRITICAL: Run the sync function
 )
 
-home_price_slider = st.slider(
+# 4. The Slider
+st.slider(
     "Or Drag to Adjust Price", 
     min_value=150000, 
     max_value=750000, 
-    value=st.session_state.price, 
+    value=st.session_state.price,     # <-- CRITICAL: Must read from the master pool
     step=100,
     format="$%d",
-    key="slider_price",
-    on_change=update_from_slider
+    key="slider_price",               # <-- CRITICAL: Temporary slider memory
+    on_change=update_from_slider      # <-- CRITICAL: Run the sync function
 )
 
-# 4. CRITICAL: This variable feeds the rest of your math layers below
+# 5. Math execution variable
 home_price = st.session_state.price
 
 # --- LOCATION SELECTORS ---
